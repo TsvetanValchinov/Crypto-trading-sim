@@ -32,3 +32,6 @@ CREATE TABLE transactions(
     CONSTRAINT FK_transaction_account FOREIGN KEY (account_id)
         REFERENCES accounts(id) ON DELETE CASCADE
 );
+
+ALTER TABLE accounts
+    ADD initial_balance DECIMAL(20,8) NOT NULL CHECK (initial_balance >= 0) default 10000.00;
