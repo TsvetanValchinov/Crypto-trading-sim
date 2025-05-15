@@ -30,6 +30,16 @@ public class AccountRepository {
         }
     }
 
+    public  Optional<Account> findByAccountId(Long accountId) {
+        String sql = "SELECT * FROM accounts WHERE id = ?";
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, accountRowMapper, accountId));
+        }
+        catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     public  Account save(Account account) {
         if (account.getId() == null) {
             String sql = "INSERT INTO accounts (user_id, balance, created_at, updated_at)" +
