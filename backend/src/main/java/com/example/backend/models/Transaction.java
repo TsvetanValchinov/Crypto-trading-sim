@@ -3,20 +3,15 @@ package com.example.backend.models;
 import  java.math.BigDecimal;
 import  java.time.LocalDateTime;
 
-enum TransactionType
-{
-    BUY,
-    SELL
-}
 public class Transaction {
     private Long id;
     private Long accountId;
     private String symbol;
     private BigDecimal quantity;
     private  BigDecimal price;
-    private TransactionType type; // TODO: is it better to be enum?
+    private TransactionType type;
     private LocalDateTime timestamp;
-    private BigDecimal profitLoss; // calculated for SELL transactions
+    private BigDecimal profitLoss; // calculated for sale transactions
 
     public Transaction() {}
 
@@ -47,4 +42,18 @@ public class Transaction {
     public LocalDateTime getTimestamp() {return timestamp;}
 
     public BigDecimal getProfitLoss() {return profitLoss;}
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", accountId=" + accountId +
+                ", symbol='" + symbol + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                ", type='" + type + '\'' +
+                ", timestamp=" + timestamp +
+                ", profitLoss=" + profitLoss +
+                '}';
+    }
 }

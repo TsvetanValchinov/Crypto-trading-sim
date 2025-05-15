@@ -39,5 +39,17 @@ public class CryptoAsset {
 
     public LocalDateTime getUpdatedAt() {return updatedAt;}
     public void setUpdatedAt(LocalDateTime updatedAt) {this.updatedAt = updatedAt;}
+
+    @Override
+    public String toString() {
+        return "CryptoAsset{" +
+                "id=" + id +
+                ", accountId=" + accountId +
+                ", symbol='" + symbol + '\'' +
+                ", quantity=" + quantity +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }
 

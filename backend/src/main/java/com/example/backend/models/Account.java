@@ -36,4 +36,14 @@ public class Account {
     public  LocalDateTime getUpdatedAt() {return this.updatedAt;}
     public  void  setUpdatedAt(LocalDateTime updatedAt) {this.updatedAt = updatedAt;}
 
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", balance=" + balance +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }
