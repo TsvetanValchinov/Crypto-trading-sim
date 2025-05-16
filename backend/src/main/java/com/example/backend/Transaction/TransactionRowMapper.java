@@ -1,7 +1,5 @@
-package com.example.backend.mappers;
+package com.example.backend.Transaction;
 
-import com.example.backend.models.Transaction;
-import com.example.backend.models.TransactionType;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

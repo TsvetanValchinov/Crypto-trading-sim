@@ -1,15 +1,10 @@
-package com.example.backend.repositories;
+package com.example.backend.Crypto;
 
-import com.example.backend.mappers.CryptoAssetRowMapper;
-import com.example.backend.models.CryptoAsset;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.math.BigDecimal;
 
 @Repository
 public class CryptoAssetRepository {

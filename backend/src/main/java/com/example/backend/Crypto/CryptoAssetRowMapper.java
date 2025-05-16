@@ -1,6 +1,5 @@
-package com.example.backend.mappers;
+package com.example.backend.Crypto;
 
-import com.example.backend.models.CryptoAsset;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

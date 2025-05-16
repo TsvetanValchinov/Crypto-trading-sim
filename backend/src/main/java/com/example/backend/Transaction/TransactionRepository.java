@@ -1,13 +1,9 @@
-package com.example.backend.repositories;
+package com.example.backend.Transaction;
 
-import com.example.backend.mappers.TransactionRowMapper;
-import com.example.backend.models.Transaction;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 @Repository
 public class TransactionRepository {

@@ -1,5 +1,4 @@
-package com.example.backend.mappers;
-import  com.example.backend.models.Account;
+package com.example.backend.Account;
 import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;

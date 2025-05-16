@@ -1,13 +1,8 @@
-package com.example.backend.repositories;
+package com.example.backend.Account;
 
-import com.example.backend.mappers.AccountRowMapper;
-import com.example.backend.models.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Optional;
 import java.math.BigDecimal;
 

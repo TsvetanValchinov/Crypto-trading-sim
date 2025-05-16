@@ -1,11 +1,9 @@
-package com.example.backend.services;
+package com.example.backend.Account;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.backend.models.Account;
-import com.example.backend.repositories.AccountRepository;
-import com.example.backend.repositories.CryptoAssetRepository;
-import com.example.backend.repositories.TransactionRepository;
+import com.example.backend.Crypto.CryptoAssetRepository;
+import com.example.backend.Transaction.TransactionRepository;
 
 import javax.naming.InsufficientResourcesException;
 import java.math.BigDecimal;
