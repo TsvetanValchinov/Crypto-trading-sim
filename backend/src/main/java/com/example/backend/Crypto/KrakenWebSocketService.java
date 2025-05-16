@@ -7,8 +7,10 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -23,6 +25,7 @@ public class KrakenWebSocketService {
     private BiConsumer<String, BigDecimal> priceUpdateHandler;
     private final ConcurrentHashMap<String, BigDecimal> buyPrices = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, BigDecimal> sellPrices = new ConcurrentHashMap<>();
+    private final Map<String, CryptoCurrency> cryptoCurrencies = new ConcurrentHashMap<>();
 
     private final List<String> pairs = Arrays.asList(
             "BTC/USD", "ETH/USD", "XRP/USD", "DOGE/USD", "ADA/USD",
@@ -32,7 +35,6 @@ public class KrakenWebSocketService {
     );
 
     String KrakenURL = "wss://ws.kraken.com/v2";
-    //String SubscriptionMsg = "{ \"event\":\"subscribe\", \"subscription\":{\"name\":\"trade\"},\"pair\":[\"XBT/USD\"] }";
 
     public KrakenWebSocketService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -107,6 +109,9 @@ public class KrakenWebSocketService {
                     jsonNode.has("data") && jsonNode.get("data").isArray()){
                 for(JsonNode entry : jsonNode.get("data")){
                     String symbol = jsonNode.get("symbol").asText();
+                    if(!cryptoCurrencies.containsKey(symbol)){
+                        cryptoCurrencies.put(symbol, new CryptoCurrency(symbol, symbol, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
+                    }
 
                     if(entry.has("bid")){
                         BigDecimal bid = new BigDecimal(entry.get("bid").asText());
@@ -120,6 +125,7 @@ public class KrakenWebSocketService {
 
                     if(priceUpdateHandler != null && entry.has("last")){
                         priceUpdateHandler.accept(symbol, new BigDecimal(entry.get("last").asText()));
+                        cryptoCurrencies.get(symbol).setPrice(new BigDecimal(entry.get("last").asText()));
                     }
                 }
             }
@@ -142,6 +148,15 @@ public class KrakenWebSocketService {
 
     public ConcurrentMap<String, BigDecimal> getSellPrices() {
         return sellPrices;
+    }
+
+    public List<CryptoCurrency> getTop20CryptoCurrencies() {
+        List<CryptoCurrency> currencies = new ArrayList<>(cryptoCurrencies.values());
+        return  currencies.subList(0, Math.min(currencies.size(), 20));
+    }
+
+    public CryptoCurrency getCryptoCurrency(String symbol) {
+        return cryptoCurrencies.get(symbol);
     }
 
 
