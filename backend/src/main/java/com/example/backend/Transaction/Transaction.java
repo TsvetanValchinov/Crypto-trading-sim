@@ -27,6 +27,18 @@ public class Transaction {
         this.profitLoss = profitLoss;
     }
 
+    public Transaction(Long accountId, String symbol,BigDecimal quantity,
+                       BigDecimal price, TransactionType type,
+                       LocalDateTime timestamp, BigDecimal profitLoss) {
+        this.accountId = accountId;
+        this.symbol = symbol;
+        this.quantity = quantity;
+        this.price = price;
+        this.type = type;
+        this.timestamp = timestamp;
+        this.profitLoss = profitLoss;
+    }
+
     public Long getId() {return id;}
 
     public Long getAccountId() {return accountId;}
