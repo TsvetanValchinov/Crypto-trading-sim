@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
+
 @Service
 public class TransactionService {
 
@@ -103,7 +105,23 @@ public class TransactionService {
     }
 
     private BigDecimal calculateProfitLoss(Long accountId, String symbol, BigDecimal quantity, BigDecimal currPrice) {
-            // TODO: implement this
-        return BigDecimal.ZERO;
+            BigDecimal totalBoughtQuantity = BigDecimal.ZERO;
+            BigDecimal totalBoughtPrice = BigDecimal.ZERO;
+            List<Transaction> prevTransactions = transactionRepository.findByAccountIdAndSymbol(accountId, symbol);
+            for(Transaction t : prevTransactions)
+            {
+                if(t.getType() == TransactionType.BUY) {
+                    totalBoughtQuantity = totalBoughtQuantity.add(t.getQuantity());
+                    totalBoughtPrice = totalBoughtPrice.add(t.getPrice().multiply(t.getQuantity()));
+                }
+                if(totalBoughtQuantity.compareTo(quantity) >= 0 ) // breaks if we have the needed quantity
+                    break;
+            }
+            if(totalBoughtQuantity.compareTo(quantity) < 0) {
+                return BigDecimal.ZERO;
+            }
+            BigDecimal averagePrice = totalBoughtPrice.divide(totalBoughtQuantity);
+            return currPrice.subtract(averagePrice).multiply(quantity);
+
     }
 }

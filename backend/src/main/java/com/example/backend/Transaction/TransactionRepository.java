@@ -20,6 +20,11 @@ public class TransactionRepository {
         return jdbcTemplate.query(sql, transactionRowMapper, accountId);
     }
 
+    public List<Transaction> findByAccountIdAndSymbol(Long accountId, String symbol) {
+        String sql = "SELECT * FROM transactions WHERE account_id = ? AND symbol = ?  ORDER BY timestamp DESC";
+        return jdbcTemplate.query(sql, transactionRowMapper, accountId, symbol);
+    }
+
     public  Transaction save(Transaction transaction) {
         String sql = "INSERT INTO transactions (account_id, symbol, quantity, price, type, timestamp, profit_loss)" +
                 "VALUES (?, ?, ?, ?, ?, GETDATE(), ?); SELECT id, timestamp FROM transactions WHERE id = SCOPE_IDENTITY()";
