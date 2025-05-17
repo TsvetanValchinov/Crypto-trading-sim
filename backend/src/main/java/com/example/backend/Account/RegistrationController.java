@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/account")
-public class AccountRegistrationController {
+public class RegistrationController {
     private final AccountService accountService;
 
     @Autowired
-    public AccountRegistrationController(AccountService accountService) {
+    public RegistrationController(AccountService accountService) {
         this.accountService = accountService;
     }
 

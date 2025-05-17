@@ -3,6 +3,7 @@ package com.example.backend.Transaction;
 import com.example.backend.Account.AccountService;
 import com.example.backend.Crypto.CryptoAsset;
 import com.example.backend.Crypto.CryptoAssetRepository;
+import com.example.backend.Crypto.CryptoAssetService;
 import com.example.backend.Crypto.KrakenWebSocketService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +19,14 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final CryptoAssetRepository cryptoAssetRepository;
+    private final CryptoAssetService cryptoAssetService;
     private final AccountService accountService;
     private final KrakenWebSocketService krakenWebSocketService;
 
-    public TransactionService(TransactionRepository transactionRepository, CryptoAssetRepository cryptoAssetRepository,
+    public TransactionService(TransactionRepository transactionRepository, CryptoAssetService cryptoAssetService,
                               AccountService accountService, KrakenWebSocketService krakenWebSocketService){
         this.transactionRepository = transactionRepository;
-        this.cryptoAssetRepository = cryptoAssetRepository;
+        this.cryptoAssetService = cryptoAssetService;
         this.accountService = accountService;
         this.krakenWebSocketService = krakenWebSocketService;
     }
@@ -43,19 +44,8 @@ public class TransactionService {
         BigDecimal totalCost = currPrice.multiply(quantity);
         accountService.updateBalance(accountId, totalCost.negate());
 
-        Optional<CryptoAsset> existingAsset = cryptoAssetRepository.findByAccountIdAndSymbol(accountId, symbol);
-        if(existingAsset.isPresent()){
-            CryptoAsset asset = existingAsset.get();
-            asset.setQuantity(asset.getQuantity().add(quantity));
-            cryptoAssetRepository.save(asset);
-        }
-        else {
-            CryptoAsset newAsset = new CryptoAsset();
-            newAsset.setAccountId(accountId);
-            newAsset.setSymbol(symbol);
-            newAsset.setQuantity(quantity);
-            cryptoAssetRepository.save(newAsset);
-        }
+        cryptoAssetService.addOrUpdateAsset(accountId, symbol, quantity);
+
         Transaction transaction = new Transaction(
                 accountId,
                 symbol,
@@ -70,8 +60,8 @@ public class TransactionService {
 
     @Transactional
     public Transaction sellCrypto(Long accountId, String symbol, BigDecimal quantity) throws InsufficientResourcesException {
-        CryptoAsset asset = cryptoAssetRepository.findByAccountIdAndSymbol(accountId, symbol).orElseThrow(() -> new IllegalArgumentException("This account does not have this asset " + symbol));
-        if(asset.getQuantity().compareTo(quantity) < 0) {
+       BigDecimal currQuantity = cryptoAssetService.getQuantity(accountId, symbol);
+        if(currQuantity.compareTo(quantity) < 0) {
             throw new IllegalArgumentException("Insufficient quantity for this asset:" + symbol);
         }
         BigDecimal currPrice = krakenWebSocketService.getSellPrice(symbol);
@@ -81,13 +71,12 @@ public class TransactionService {
         BigDecimal totalSellAmount = currPrice.multiply(quantity);
         accountService.updateBalance(accountId, totalSellAmount);
 
-        BigDecimal newQuantity = asset.getQuantity().subtract(quantity);
+        BigDecimal newQuantity = currQuantity.subtract(quantity);
         if(newQuantity.compareTo(BigDecimal.ZERO) > 0) {
-            asset.setQuantity(newQuantity);
-            cryptoAssetRepository.save(asset);
+            cryptoAssetService.updateQuantity(accountId, symbol, newQuantity);
         }
         else {
-            cryptoAssetRepository.deleteByAccountId(accountId);
+            cryptoAssetService.deleteByAccountIdAndSymbol(accountId, symbol);
         }
 
         BigDecimal profitLoss = calculateProfitLoss(accountId, symbol, quantity, currPrice);

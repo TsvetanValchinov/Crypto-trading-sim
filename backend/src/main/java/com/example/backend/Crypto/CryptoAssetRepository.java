@@ -45,7 +45,12 @@ public class CryptoAssetRepository {
     }
 
     public  void deleteByAccountId(Long accountId) {
-        String sql = "DELETE FROM cryptocurrency_assets WHERE id = ?";
+        String sql = "DELETE FROM cryptocurrency_assets WHERE account_id = ?";
         jdbcTemplate.update(sql, accountId);
+    }
+
+    public void deleteByAccountIdAndSymbol(Long accountId, String symbol) {
+        String sql = "DELETE FROM cryptocurrency_assets WHERE account_id = ? AND symbol = ?";
+        jdbcTemplate.update(sql, accountId, symbol);
     }
 }
