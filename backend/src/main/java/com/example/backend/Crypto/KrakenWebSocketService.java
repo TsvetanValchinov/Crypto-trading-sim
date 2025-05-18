@@ -46,13 +46,13 @@ public class KrakenWebSocketService {
 
     @PostConstruct
     public void connect() {
-        HttpClient.newHttpClient().newWebSocketBuilder().buildAsync(URI.create(KrakenURL), new WebSocket.Listener() {
-
-            @Override
-            public void onOpen(WebSocket ws) {
-                webSocket = ws;
-                pairs.forEach(pair -> {
-                    String msg = String.format("""
+        try{
+            HttpClient.newHttpClient().newWebSocketBuilder().buildAsync(URI.create(KrakenURL), new WebSocket.Listener() {
+                @Override
+                public void onOpen(WebSocket ws) {
+                    webSocket = ws;
+                    pairs.forEach(pair -> {
+                        String msg = String.format("""
                             {
                                 "method": "subscribe",
                                 "params": {
@@ -60,31 +60,35 @@ public class KrakenWebSocketService {
                                   "symbol": ["%s"]
                                   }
                             }""", pair);
-                    ws.sendText(msg, true);
-                });
-                WebSocket.Listener.super.onOpen(ws);
-            }
+                        ws.sendText(msg, true);
+                    });
+                    WebSocket.Listener.super.onOpen(ws);
+                }
 
-            @Override
-            public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last) {
-                handleMessage(data.toString());
-                return WebSocket.Listener.super.onText(ws, data, last);
-            }
+                @Override
+                public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last) {
+                    handleMessage(data.toString());
+                    return WebSocket.Listener.super.onText(ws, data, last);
+                }
 
-            @Override
-            public void onError(WebSocket ws, Throwable error) {
-                System.err.println("Error: " + error.getMessage());
-                reconnect();
-            }
+                @Override
+                public void onError(WebSocket ws, Throwable error) {
+                    System.err.println("Error: " + error.getMessage());
+                    reconnect();
+                }
 
-            @Override
-            public CompletionStage<?> onClose(WebSocket ws, int statusCode, String reason) {
-                System.out.println("Closed: " + reason);
-                reconnect();
-                return WebSocket.Listener.super.onClose(ws,
-                        statusCode, reason);
-            }
-        });
+                @Override
+                public CompletionStage<?> onClose(WebSocket ws, int statusCode, String reason) {
+                    System.out.println("Closed: " + reason);
+                    reconnect();
+                    return WebSocket.Listener.super.onClose(ws,
+                            statusCode, reason);
+                }
+            });
+        }
+        catch (Exception e) {
+            System.err.println("Failed to initialize WebSocket connection " + e.getMessage());
+        }
     }
 
     public void disconnect() {
@@ -106,8 +110,10 @@ public class KrakenWebSocketService {
         try{
             JsonNode jsonNode = objectMapper.readTree(message);
             if(jsonNode.has("channel") && "ticker".equals(jsonNode.get("channel").asText()) &&
+                    jsonNode.has("type") && "update".equals(jsonNode.get("type")) &&
                     jsonNode.has("data") && jsonNode.get("data").isArray()){
-                for(JsonNode entry : jsonNode.get("data")){
+                JsonNode dataArray = jsonNode.get("data");
+                for(JsonNode entry : dataArray){
                     String symbol = jsonNode.get("symbol").asText();
                     if(!cryptoCurrencies.containsKey(symbol)){
                         cryptoCurrencies.put(symbol, new CryptoCurrency(symbol, symbol, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
@@ -124,13 +130,15 @@ public class KrakenWebSocketService {
                     }
 
                     if(priceUpdateHandler != null && entry.has("last")){
-                        priceUpdateHandler.accept(symbol, new BigDecimal(entry.get("last").asText()));
-                        cryptoCurrencies.get(symbol).setPrice(new BigDecimal(entry.get("last").asText()));
+                        BigDecimal lastPrice = new BigDecimal(entry.get("last").asText());
+                        priceUpdateHandler.accept(symbol, lastPrice);
+                        cryptoCurrencies.get(symbol).setPrice(lastPrice);
                     }
                 }
             }
         } catch (Exception e) {
             System.err.println("Failed to parse Kraken message " + e.getMessage());
+            System.err.println(message);
         }
     }
 

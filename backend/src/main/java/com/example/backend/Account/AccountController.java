@@ -65,7 +65,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/accountId/reset")
+    @PostMapping("/{accountId}/reset")
     public ResponseEntity<String> resetAccount(@PathVariable Long accountId) {
         accountService.resetAccount(accountId);
         return ResponseEntity.ok("Account reset");
