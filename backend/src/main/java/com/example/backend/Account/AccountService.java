@@ -35,7 +35,6 @@ public class AccountService {
     public BigDecimal getBalance(Long accountId) {
         return accountRepository.findByAccountId(accountId).map(Account::getBalance).orElse(BigDecimal.ZERO);
     }
-    // TODO: should the finding be with byAccountId or byUserId?
     @Transactional
     public  void updateBalance(Long accountId, BigDecimal amount) throws InsufficientResourcesException {
         Account account = accountRepository.findByAccountId(accountId).orElseThrow(() -> new RuntimeException("Account not found"));

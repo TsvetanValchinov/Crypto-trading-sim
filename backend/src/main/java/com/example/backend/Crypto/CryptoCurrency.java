@@ -2,7 +2,7 @@ package com.example.backend.Crypto;
 
 import  java.math.BigDecimal;
 
-public class CryptoCurrency {
+public class  CryptoCurrency {
     private  String symbol;
     private  String name;
     private  BigDecimal price;

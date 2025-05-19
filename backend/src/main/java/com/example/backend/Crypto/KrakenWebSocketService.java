@@ -166,6 +166,4 @@ public class KrakenWebSocketService {
     public CryptoCurrency getCryptoCurrency(String symbol) {
         return cryptoCurrencies.get(symbol);
     }
-
-
 }

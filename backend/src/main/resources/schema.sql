@@ -2,7 +2,7 @@ CREATE TABLE accounts(
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
     user_id BIGINT NOT NULL,
     balance DECIMAL(20,8) NOT NULL CHECK (balance >= 0),
-    --initial_balance DECIMAL(20,8) NOT NULL CHECK (initial_balance >= 0), TODO: do i need initial balance
+    initial_balance DECIMAL(20,8) NOT NULL CHECK (initial_balance >= 0),
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     CONSTRAINT UC_user_id UNIQUE (user_id)

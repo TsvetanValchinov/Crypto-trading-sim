@@ -1,19 +1,13 @@
 package com.example.backend.Transaction;
 
 import com.example.backend.Account.AccountService;
-import com.example.backend.Crypto.CryptoAsset;
-import com.example.backend.Crypto.CryptoAssetRepository;
 import com.example.backend.Crypto.CryptoAssetService;
 import com.example.backend.Crypto.KrakenWebSocketService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.naming.InsufficientResourcesException;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-
-import static java.math.BigDecimal.ROUND_HALF_UP;
 
 @Service
 public class TransactionService {

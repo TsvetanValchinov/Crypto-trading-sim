@@ -23,10 +23,10 @@ public class Account {
     }
 
     public  Long getId() {return this.id;}
-    public  void setId(Long id) {this.id = id;} // TODO: should it have setter?
+    public  void setId(Long id) {this.id = id;}
 
     public  Long getUserId() {return this.userId;}
-    public  void setUserId(Long userId) {this.userId = userId;}// TODO: should it have setter?
+    public  void setUserId(Long userId) {this.userId = userId;}
 
     public  BigDecimal getBalance() {return this.balance;}
     public  void  setBalance(BigDecimal balance) {this.balance = balance;}

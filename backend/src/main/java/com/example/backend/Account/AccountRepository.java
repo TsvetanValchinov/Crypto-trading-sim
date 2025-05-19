@@ -38,10 +38,19 @@ public class AccountRepository {
     public  Account save(Account account) {
         if (account.getId() == null) {
             String sql = "INSERT INTO accounts (user_id, balance, created_at, updated_at)" +
-                    "VALUES (?, ?, GETDATE(), GETDATE());  SELECT SCOPE_IDENTITY();";
-            Long id = jdbcTemplate.queryForObject(sql, Long.class, account.getUserId(), account.getBalance());
-            account.setId(id);
-            account.setInitialBalance(new BigDecimal(10000));
+                    "VALUES (?, ?, GETDATE(), GETDATE()); SELECT SCOPE_IDENTITY()";
+            String identitySql = "SELECT SCOPE_IDENTITY()";
+            try{
+                Long id = jdbcTemplate.queryForObject(sql, Long.class, account.getUserId(), account.getBalance());
+                account.setId(id);
+                account.setInitialBalance(new BigDecimal(10000));
+            }
+            catch (org.springframework.dao.DuplicateKeyException e){
+                Optional<Account> checkedAccount = findByUserId(account.getUserId());
+                if(checkedAccount.isPresent()) {
+                   return checkedAccount.get();
+                }
+            }
         }
         else {
             String sql = "UPDATE accounts SET balance = ?, updated_at = GETDATE() WHERE id = ?";
