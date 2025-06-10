@@ -64,4 +64,4 @@ The frontend connects to a Spring Boot backend with the following endpoints:
 
 - The application uses React Bootstrap for UI components
 - Real-time price updates are simulated in the current implementation
-- In a not testing environment, replace the mock data with actual Kraken WebSocket API integration by changing the usage of cryptoService with krakenService in 
+- In a not testing environment, replace the mock data with actual Kraken WebSocket API integration by changing the usage of cryptoService with krakenService
